@@ -58,7 +58,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
     /**
      * When showing or hiding the menu via a drag gesture, the maximum number
      * of pixels the touch can move vertically and still affect the menu.
-     * 
+     *
      * @type Number
      */
     var MENU_DRAG_VERTICAL_TOLERANCE = 10;
@@ -100,7 +100,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
         0x0301: true,
         0x0308: true
     };
- 
+
     /**
      * All tunnel error codes handled and passed off for translation. Any error
      * code not present in this list will be represented by the "DEFAULT"
@@ -117,7 +117,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
         0x0308: true,
         0x031D: true
     };
- 
+
     /**
      * All error codes for which automatic reconnection is appropriate when a
      * tunnel error occurs.
@@ -266,14 +266,14 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
 
     /*
      * Check to see if all currently pressed keys are in the set of menu keys.
-     */  
+     */
     function checkMenuModeActive() {
         for(var keysym in keysCurrentlyPressed) {
             if(!MENU_KEYS[keysym]) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -329,7 +329,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
      * If a pinch gesture is in progress, the X coordinate of the point on the
      * client display that was centered within the pinch at the time the
      * gesture began.
-     * 
+     *
      * @type Number
      */
     var initialCenterX = 0;
@@ -338,7 +338,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
      * If a pinch gesture is in progress, the Y coordinate of the point on the
      * client display that was centered within the pinch at the time the
      * gesture began.
-     * 
+     *
      * @type Number
      */
     var initialCenterY = 0;
@@ -393,11 +393,11 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
     });
 
     $scope.$watch('menu.shown', function menuVisibilityChanged(menuShown, menuShownPreviousState) {
-        
+
         // Send clipboard data if menu is hidden
         if (!menuShown && menuShownPreviousState)
             $scope.$broadcast('guacClipboard', $scope.client.clipboardData);
-        
+
         // Disable client keyboard if the menu is shown
         $scope.client.clientProperties.keyboardEnabled = !menuShown;
 
@@ -477,28 +477,28 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
     $scope.$on('guacKeydown', function keydownListener(event, keysym, keyboard) {
 
         // Record key as pressed
-        keysCurrentlyPressed[keysym] = true;   
-        
-        /* 
+        keysCurrentlyPressed[keysym] = true;
+
+        /*
          * If only menu keys are pressed, and we have one keysym from each group,
-         * and one of the keys is being released, show the menu. 
+         * and one of the keys is being released, show the menu.
          */
         if(checkMenuModeActive()) {
             var currentKeysPressedKeys = Object.keys(keysCurrentlyPressed);
-            
+
             // Check that there is a key pressed for each of the required key classes
             if(!_.isEmpty(_.pick(SHIFT_KEYS, currentKeysPressedKeys)) &&
                !_.isEmpty(_.pick(ALT_KEYS, currentKeysPressedKeys)) &&
                !_.isEmpty(_.pick(CTRL_KEYS, currentKeysPressedKeys))
             ) {
-        
+
                 // Don't send this key event through to the client
                 event.preventDefault();
-                
+
                 // Reset the keys pressed
                 keysCurrentlyPressed = {};
                 keyboard.reset();
-                
+
                 // Toggle the menu
                 $scope.$apply(function() {
                     $scope.menu.shown = !$scope.menu.shown;
@@ -573,7 +573,7 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
         // Get any associated status code
         var status = $scope.client.clientState.statusCode;
 
-        // Connecting 
+        // Connecting
         if (connectionState === ManagedClientState.ConnectionState.CONNECTING
          || connectionState === ManagedClientState.ConnectionState.WAITING) {
             guacNotification.showStatus({
@@ -653,28 +653,43 @@ angular.module('client').controller('clientController', ['$scope', '$routeParams
     $scope.formattedScale = function formattedScale() {
         return Math.round($scope.client.clientProperties.scale * 100);
     };
-    
+
     $scope.zoomIn = function zoomIn() {
         $scope.menu.autoFit = false;
         $scope.client.clientProperties.autoFit = false;
         $scope.client.clientProperties.scale += 0.1;
     };
-    
+
     $scope.zoomOut = function zoomOut() {
         $scope.client.clientProperties.autoFit = false;
         $scope.client.clientProperties.scale -= 0.1;
     };
-    
+
+    $scope.zoom05x = function zoom05x() {
+      $scope.client.clientProperties.autoFit = false;
+      $scope.client.clientProperties.scale = 0.5;
+    }
+
+    $scope.zoom1x = function zoom1x() {
+      $scope.client.clientProperties.autoFit = false;
+      $scope.client.clientProperties.scale = 1;
+    }
+
+    $scope.zoom2x = function zoom2x() {
+      $scope.client.clientProperties.autoFit = false;
+      $scope.client.clientProperties.scale = 2;
+    }
+
     $scope.changeAutoFit = function changeAutoFit() {
+      $scope.client.clientProperties.scale = 1;
         if ($scope.menu.autoFit && $scope.client.clientProperties.minScale) {
             $scope.client.clientProperties.autoFit = true;
         }
         else {
             $scope.client.clientProperties.autoFit = false;
-            $scope.client.clientProperties.scale = 1; 
         }
     };
-    
+
     $scope.autoFitDisabled = function() {
         return $scope.client.clientProperties.minZoom >= 1;
     };

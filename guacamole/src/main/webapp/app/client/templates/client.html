@@ -153,6 +153,9 @@
                             <div ng-click="zoomOut()" id="zoom-out"><img src="images/settings/zoom-out.png" alt="-"/></div>
                             <div id="zoom-state">{{formattedScale()}}%</div>
                             <div ng-click="zoomIn()" id="zoom-in"><img src="images/settings/zoom-in.png" alt="+"/></div>
+                            <div ng-click="zoom05x()" id="zoom-05x">0.5x</div>
+                            <div ng-click="zoom1x()" id="zoom-1x">1x</div>
+                            <div ng-click="zoom2x()" id="zoom-2x">2x</div>
                         </div>
                         <div><label><input ng-model="menu.autoFit" ng-change="changeAutoFit()" ng-disabled="autoFitDisabled()" type="checkbox" id="auto-fit"/> {{'CLIENT.TEXT_ZOOM_AUTO_FIT' | translate}}</label></div>
                     </div>
